@@ -3,6 +3,6 @@ const router = express.Router();
 
 const { updateUser } = require('../controllers/UserController');
 
-router.post('/update/:id', updateUser);
+router.post('/update/:userID', updateUser);
 
 module.exports = router;
