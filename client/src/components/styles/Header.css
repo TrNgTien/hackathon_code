@@ -1,0 +1,101 @@
+.wrapper-header {
+  display: flex;
+  position: sticky;
+  top: 0;
+  right: 0;
+  left: 0;
+  padding: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+}
+.wrapper-header--left {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: calc(100% / 3);
+}
+.navigation-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% / 2);
+}
+.choosing-tab {
+  padding: 1rem;
+  background-color: var(--primary-color);
+  border-radius: 10px;
+  color: white !important;
+  margin: 0px 10px;
+}
+.chatting-tab,
+.sharing-tab {
+  font-weight: 600;
+  font-size: 20px;
+  padding: 1rem;
+  white-space: nowrap;
+  margin: 0px 10px;
+  line-height: 16px;
+  color: var(--primary-color);
+}
+.chatting-tab:hover,
+.sharing-tab:hover {
+  cursor: pointer;
+}
+.wrapper-header--right {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: calc(100% / 3);
+}
+.filter-topic {
+  border-radius: 5px;
+  background: #f2f2f2;
+  border-radius: 17.5px;
+  position: relative;
+  align-items: center;
+  display: flex;
+}
+.filter-topic > input {
+  border: none;
+  background: transparent;
+  padding: 0.8rem 1rem;
+  outline: none;
+}
+.search-icon {
+  position: absolute;
+  right: 10px;
+}
+.wrapper-btn {
+  display: flex;
+  justify-content: space-between;
+}
+.btn--register {
+  background: #ffffff;
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
+  padding: 0.8rem;
+  outline: none;
+  margin-right: 10px;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+.btn--login {
+  background: var(--primary-color);
+  border-radius: 5px;
+  outline: none;
+  font-weight: 600;
+  color: white;
+  border: none;
+  padding: 0.8rem;
+}
+.btn--register:hover,
+.btn--login:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+.btn--register:active,
+.btn--login:active {
+  cursor: pointer;
+  opacity: 0.65;
+}
