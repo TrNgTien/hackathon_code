@@ -1,10 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const userController = require('../controllers/UserController');
+const { updateUser } = require('../controllers/UserController');
 
-// router.get('/', userController.getUserList);
-// router.get('/:idUser', userController.getUser);
-// router.get('/:idPost/post', userController.getPost);
+router.post('/update/:userID', updateUser);
 
 module.exports = router;
