@@ -10,6 +10,8 @@ module.exports = {
       } catch (err) {
         res.status(500).json(err);
       }
+    } else {
+      res.status(403).json({ message: 'You are not authorized to create a post' });
     }
   },
 
@@ -32,11 +34,15 @@ module.exports = {
   },
 
   deletePost: async (req, res) => {
-    try {
-      const deletedPost = await Post.findByIdAndDelete(req.params.id);
-      res.status(200).json(deletedPost);
-    } catch (err) {
-      res.status(500).json(err);
+    if (req.user.role == 'expert') {
+      try {
+        const deletedPost = await Post.findByIdAndDelete(req.params.id);
+        res.status(200).json(deletedPost);
+      } catch (err) {
+        res.status(500).json(err);
+      }
+    } else {
+      res.status(403).json({ message: 'You are not authorized to create a post' });
     }
   },
 
