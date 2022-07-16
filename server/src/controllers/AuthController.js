@@ -73,7 +73,7 @@ const login = async (req, res) => {
             return res.status(401).json({ message: "Incorrect password" });
         }
         const payload = { id: user._id, userName: user.userName };
-        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_TOKEN, { expiresIn: "1h" });
+        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_TOKEN, { expiresIn: "1d" });
         res.status(200).json({ user, accessToken });
         } catch (err) {
             res.status(500).json(err);

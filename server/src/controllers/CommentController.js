@@ -1,10 +1,18 @@
 const Comment = require('../models/Comment');
+const Post = require('../models/Post');
 
 module.exports = { 
-  commentRequest: async(req, res) => {
+  commentPost: async(req, res) => {
     if (req.user.userType == 'expert') {
-      const newComment = new Comment(req.body);
       try {
+        const { commentContent } = req.body;
+        const post = await Post.findOne({ _id: req.params.postID });
+        const newComment = new Comment({
+          commentContent,
+          createdAt,
+          userId: req.user.id,
+          postId: req.params.postID,
+        });
         const savedComment = await newComment.save();
         res.status(201).json(savedComment);
       } catch (err) {

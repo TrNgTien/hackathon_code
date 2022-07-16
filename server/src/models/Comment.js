@@ -5,7 +5,8 @@ const Comment = new Schema(
   {
     commentContent: { type: String },
     createdAt: { type: Date, default: new Date().toLocaleString() },
-    userID: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    userID: { type: Array, ref: 'User' },
+    postID: { type: Array, ref: 'Post' },
   }, {
     timestamps: true
 });
