@@ -11,6 +11,7 @@ const REDIRECTURL = "https://localhost:5000/auth/google";
 const register = async (req, res) => {
   try {
     const {
+      email,
       userName,
       password,
       userAvatar,
@@ -24,6 +25,7 @@ const register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
     const newUser = new User({
+      email,
       userName,
       password: hashedPassword,
       userAvatar,
@@ -109,7 +111,7 @@ function getTokens({ code, clientId, ClientSecret, redirectUri }) {
     });
 }
 
-const returnGoogle = async (req, res) => {
+const verifyEmail = async (req, res) => {
   try {
     const { code } = req.query;
     // const { clientId, clientSecret, redirectUri } = process.env;
@@ -347,4 +349,247 @@ const returnGoogle = async (req, res) => {
   }
 };
 
-module.exports = { register, login, google, returnGoogle };
+const forgotPassword = async(req, res) => {
+  try {
+        const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (!regex.test(req.body.email)) return res.status(400).json('Invalid email');
+
+        const user = await User.findOne({ email: req.body.email });
+        if (!user) return res.status(400).json('No account exist');
+
+        const secret = 'secretPass' + user.password;
+        const payload = {
+            email: user.email,
+            id: user.id,
+        }
+        const accessToken = jwt.sign(payload, secret, { expiresIn: '15m' });
+        const linkReset = `http://localhost:5000/auth/restPass/${user.id}/${accessToken}`;
+        const emailCus = `${user.email}`;
+
+        const sendObject = {
+            status: 'success',
+            id: user.id,
+            email: user.email,
+            token: accessToken,
+            link: linkReset
+        }
+
+        res.status(200).json({ result: sendObject });
+
+        try {
+            const output =
+                `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        .btn:hover {
+                            background-color: #737373 
+                        }
+                    </style>
+                </head>
+                <body style="background-color: #fff;">
+                        <!-- start preheader -->
+                        <div class="preheader"
+                            style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #40de65; opacity: 0;">
+                            The request for reseting password from SharingWeb Service
+                        </div>
+                        <!-- end preheader -->
+                        <!-- start body -->
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                            <!-- start logo -->
+                            <tr>
+                                <td align="center" bgcolor="#fff">
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                                        <tr>
+                                            <td align="center" valign="top" style="padding: 20px 24px;">
+                                                <h3 style="color: #348D1C;
+                                                font-weight: 700;
+                                                font-size: 50px;
+                                                line-height: 0.65;
+                                                font-family: 'Roboto', cursive; margin-bottom: -10px">
+                                                    SharingWeb
+                                                </h3>
+                                                <p style="font-size: 14px;
+                                                text-algin: center;
+                                                color: #545454;
+                                                font-weight: 400;
+                                                text-transform: capitalize;
+                                                font-style: italic;
+                                                font-family: 'Mansalva', cursive;"></p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <!-- end logo -->
+    
+                            <!-- start hero -->
+                            <tr>
+                                <td align="center" bgcolor="#fff">
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                                        <tr>
+                                            <td align="left" bgcolor="#fff"
+                                                style="padding: 36px 24px 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; border-top: 3px solid #666;">
+                                                <h1
+                                                    style="color: #348D1C; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">
+                                                    Verify Your Account</h1>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <!-- end hero -->
+                            <!-- start copy block -->
+                            <tr>
+                                <td align="center" bgcolor="#fff">
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                                        <!-- start copy -->
+                                        <tr>
+                                            <td align="left" bgcolor="#fff"
+                                                style="color: #fff; padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
+                                                <p style="margin: 0; color: #000">Tap the button below to confirm your email address. If you didn't
+                                                    register your account, you can safely delete this email.</p>
+                                            </td>
+                                        </tr>
+                                        <!-- end copy -->
+                                        <!-- start button -->
+                                        <tr>
+                                            <td align="left" bgcolor="#fff">
+                                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                    <tr>
+                                                        <td align="center" bgcolor="#fff" style="padding: 12px;">
+                                                            <table border="0" cellpadding="0" cellspacing="0">
+                                                                <tr>
+                                                                    <td align="center" bgcolor="#348D1C" style="border-radius: 6px;">
+                                                                        <a class="btn" href="${linkReset}" target="_blank"
+                                                                            style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #fff; text-decoration: none; border-radius: 6px;">Account Verification</a>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <!-- end button -->
+                                        <!-- start copy -->
+                                        <tr>
+    
+                                        </tr>
+                                        <!-- end copy -->
+                                        <!-- start copy -->
+                                        <tr>
+                                            <td align="left" bgcolor="#fff"
+                                                style="padding: 20px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #333">
+                                                <p style="margin: 0; color: #000">Sincerely,<br></p>
+                                                <p style="margin: 0; color: #348D1C">SharingWeb Service</p>
+                                            </td>
+                                        </tr>
+                                        <!-- end copy -->
+                                    </table>
+                                </td>
+                            </tr>
+                            <!-- end copy block -->
+                            <!-- start footer -->
+                            <tr>
+                                <td align="center" bgcolor="#fff" style="padding: 20px;">
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                                        <!-- start permission -->
+                                        <tr>
+                                            <td align="center" bgcolor="#fff"
+                                                style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #ccc;">
+                                                <p style="margin: 0; color: #000">You received this email because we received a request for reseting for
+                                                    your account. If you didn't request it you can safely delete this email.</p>
+                                                <p style="margin: 0; color: #000">Quarter 6, Linh Trung Ward, Thu Duc City, Ho Chi Minh City</p>
+                                            </td>
+                                        </tr>
+                                        <!-- end permission -->
+                                    </table>
+                                </td>
+                            </tr>
+                            <!-- end footer -->
+    
+                        </table>
+                        <!-- end body -->
+                    </body>
+                </html>            
+            `;
+
+            // create reusable transporter object using the default SMTP transport
+            let transporter = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 587,
+                // secure: false, // true for 465, false for other ports
+                // host: 'smtp.gmail.com',
+                // port: 465,
+                secure: false, // use SSL
+                auth: {
+                    user: 'glamorous.cs01@gmail.com', // generated ethereal user
+                    pass: 'kikshzecwigiwrfc' // generated ethereal password
+                },
+                tls: {
+                    rejectUnauthorized: false
+                }
+            });
+
+            // setup email data with unicode symbols
+            let mailOptions = {
+                from: '"SharingWeb Customer Service" <glamorous.cs01@gmail.com>', // sender address
+                to: emailCus, // list of receivers
+                subject: 'EMAIL VERIFICATION ', // Subject line
+                text: 'Hello world?', // plain text body
+                html: output // html body
+            };
+
+            // send mail with defined transport object
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    return console.log(error);
+                }
+                res.status(200).json({ result: sendObject });
+
+                console.log('Message sent: %s', info.messageId);
+                console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+            });
+            // console.log(link)
+        } 
+    catch (error) {
+        console.log("g",error.message)
+        res.send(error.message)
+    }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(err);
+    }
+}
+
+const resetPassword = async(req, res) => {
+    try {
+        const { id } = req.params;
+        const { password, confirmPassword } = req.body;
+
+        if (password !== confirmPassword) {
+            return res.status(400).json({
+                message: "Password and confirm password not match"
+            });
+        }
+
+        if (password.length < 8) {
+            return res.status(400).json({ message: 'Password must be at least 8 characters' });
+        }
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(password, salt);
+        await User.findOneAndUpdate({ _id: id }, { password: hashPassword });
+        const result = {
+            message: 'Reset password success',
+            status: 'success'
+        }
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(err);
+    }
+}
+
+module.exports = { register, login, google, verifyEmail, forgotPassword, resetPassword };
