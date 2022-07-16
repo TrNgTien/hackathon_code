@@ -2,7 +2,7 @@ const Post = require('../models/Post');
 
 module.exports = { 
   createPost: async (req, res) => {
-    if (req.user.role == 'expert') {
+    if (req.user.userType == 'expert') {
       const newPost = new Post(req.body);
       try {
         const savedPost = await newPost.save();
@@ -16,6 +16,7 @@ module.exports = {
   },
 
   updatePost: async (req, res) => {
+    //can sua lai cai user_id tren client
     if (req.user.id !== req.body.userID) {
       res.status(401).json({ message: 'You are not authorized to update this post' });
     } else {
@@ -34,7 +35,7 @@ module.exports = {
   },
 
   deletePost: async (req, res) => {
-    if (req.user.role == 'expert') {
+    if (req.user.userType == 'expert') {
       try {
         const deletedPost = await Post.findByIdAndDelete(req.params.id);
         res.status(200).json(deletedPost);
