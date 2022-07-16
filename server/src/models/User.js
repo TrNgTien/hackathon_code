@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const User = new Schema(
   {
-    userName: { type: String, default: '' },
+    userName: { type: String },
     password: { type: String, default: '' },
     email: { type: String, default: '' },
     userType: { type: String, default: 'user'},
@@ -11,9 +11,10 @@ const User = new Schema(
     userCover: { type: String, default: ''},
     biography: { type: String, default: ''},
     gender: { type: String, default: ''},
-    firstName: { type: String, default: ''},
-    lastName: { type: String, default: ''},
-    DOB: { type: String },
+    fullName: { type: String, default: ''},
+    DOB: { type: String, default: ''},
+    identityNumber: { type: String, default: ''},
+    certificate: { type: String, default: ''},
     categories: { type: Array, default: [] }
   }, {
     timestamps: true
