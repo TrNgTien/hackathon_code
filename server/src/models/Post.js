@@ -11,7 +11,8 @@ const Post = new Schema(
       imgPublicID: ''
     } },
     createdAt: { type: Date, default: new Date().toLocaleString() },
-    userID: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    userUpVoteID: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    userDownVoteID: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     authorID: { type: Schema.Types.ObjectId, ref: 'Usser' },
     categoryID: { type: Array, ref: 'Category' },
   }, {
